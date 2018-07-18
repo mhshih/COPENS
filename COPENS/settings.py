@@ -25,7 +25,7 @@ SECRET_KEY = 'orl8e)u#!kqb0j@l95&x^o))tk&^$^s@uxq6$bv03+y^tgvd*)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['lope.linguistics.ntu.edu.tw']
+ALLOWED_HOSTS = ['140.112.147.120']#'lope.linguistics.ntu.edu.tw']
 
 
 # Application definition

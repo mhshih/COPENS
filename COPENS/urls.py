@@ -18,6 +18,6 @@ from django.urls import path
 from COPENS import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api/<str:target>/<str:sense>/<str:rel>/<str:dep>',views.api),
     path('',views.home),
 ]

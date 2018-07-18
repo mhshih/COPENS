@@ -1,0 +1,17 @@
+<title>Objects of 想 in Four Senses</title>
+<style>
+.flex-container{display:flex}
+/*.flex-container>div{margin:10px}*/
+</style>
+<div class="flex-container">
+{% for sense,dep_scores in sense_dep_scores.items %}
+   <table border=1px>
+   <tr><th>{{sense}}</th><th>freq</th><th>logDice</th>
+   {% for dep,scores in dep_scores.items %}
+      {% for freq,logDice in scores %}
+      <tr><td nowrap>{{dep}}</td><td><a href=api/{{target}}/{{sense}}/dobj/{{dep}}>{{freq}}</a></td><td>{{logDice}}</tr>
+      {% endfor %}
+   {% endfor %}
+   </table>
+{% endfor %}
+</div>

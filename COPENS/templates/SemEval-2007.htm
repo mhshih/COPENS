@@ -1,0 +1,20 @@
+<title>Collocates of 想 in Four Senses</title>
+<style>
+.flex-container{display:flex}
+.flex-container>div{margin:10px}
+</style>
+   <div class="flex-container">
+{% for senseid,deprel_form_bundles in senseid_deprel_form_bundles.items %}
+   {{senseid}}:
+   {% for deprel,form_bundles in deprel_form_bundles.items %}
+      {% if deprel in target_deprels %}
+      <div><table border=1px>
+      <tr><th>{{deprel}}</th><th>freq</th></tr>
+      {% for form,bundles in form_bundles.items %}
+      <tr><td nowrap>{{form}}</td><td><a href=api/{{target}}/{{senseid}}/{{deprel}}/{{form}}>{{bundles|length}}</a></td></tr>
+      {% endfor %}
+      </table></div>
+      {% endif %}
+   {% endfor %}
+{% endfor %}
+    </div>
