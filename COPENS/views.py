@@ -1,26 +1,37 @@
-from extract_collocates_from_conllu import extract_senseid_children_collocates
-SemEval_dir='SemEval-2007/'
-target_sense_rel_dep_bundles=extract_senseid_children_collocates(conllu_filename=SemEval_dir+'Chinese_train_pos.xml.utf8.sentences.conllu.senseid')
+from django.shortcuts import render
+def home(request):
+    return render(request,'index.htm',{})
 
 from concordance import concordance
 from django.http import HttpResponse
-from django.shortcuts import render
-def home(request):
-    try:
-        keyword=request.POST['keyword']
-        selected_corpus_dir=request.POST['choice']
-        if selected_corpus_dir=='SemEval-2007/':
-            for sense,rel_dep_bundles in target_sense_rel_dep_bundles[keyword].items():
-                for rel,dep_bundles in rel_dep_bundles.items():
-                    pass
-            sense_dep_scores=target_sense_rel_dep_bundles[keyword]
-            return render(request,'dobj.htm',{'target':keyword,'sense_dep_scores':sense_dep_scores})
-            return render(request,'SemEval-2007.htm',{'target':keyword,'target_deprels':['nsubj','dobj'],'senseid_deprel_form_bundles':target_sense_rel_dep_bundles[keyword]})
-        contexts=concordance(keyword=keyword,corpus_dir=selected_corpus_dir)
-        return HttpResponse('<ol><li>'+'<li>'.join(contexts)+'</ol>')
-    except:
-        return render(request,'index.htm',{})
+def concordance_api(request):
+    keyword=request.GET['keyword']
+    selected_corpus_dir=request.GET['choice']
+    contexts=concordance(keyword=keyword,corpus_dir=selected_corpus_dir)
+    return HttpResponse('<ol><li>'+'<li>'.join(contexts)+'</ol>')
 
-def api(request,target,sense,rel,dep):
-    lines=[bundle.bundle_id+' '.join(bundle.words) for bundle in target_sense_rel_dep_bundles[target][sense][rel][dep]]
-    return HttpResponse('<br>'.join(lines))
+from math import log
+from sortedcollections import ValueSortedDict
+from COPENS.models import CoNLLU
+def sense_collocation(request): # Currently for dobj only...
+    keyword=request.POST['keyword']
+    sense_dep_scores=dict()
+    for sense in set([c.sense for c in CoNLLU.objects.filter(head=keyword)]):
+        dep_scores={}
+        for rel in set([c.rel for c in CoNLLU.objects.filter(head=keyword,sense=sense)]):
+            if rel!='dobj':continue
+            for dep in set([c.dep for c in CoNLLU.objects.filter(head=keyword,sense=sense,rel=rel)]):
+                W1RW2=[c.words for c in CoNLLU.objects.filter(head=keyword,sense=sense,rel=rel,dep=dep)]
+                W1R=[c.words for c in CoNLLU.objects.filter(head=keyword,sense=sense,rel=rel)]
+                W2=[c.words for c in CoNLLU.objects.filter(dep=dep)]
+                logDice=14+log(2*len(W1RW2)/(len(W1R)+len(W2)))
+                H=3
+                logDiceH=14+log(H*len(W1RW2)/(len(W1R)+len(W2)))
+                dep_scores[dep]=round(logDiceH,2),W1RW2,round(logDice,2)
+        sense_dep_scores[sense]=sorted(dep_scores.items(),key=lambda dep_scores:dep_scores[1],reverse=True)
+    return render(request,'dobj.htm',{'head':keyword,'rel':'dobj','sense_dep_scores':sense_dep_scores})
+
+def collocation_api(request,head,sense,rel,dep):
+    items=CoNLLU.objects.filter(head=head,sense=sense,rel=rel,dep=dep)
+    return HttpResponse('<ol><li>'+'<li>'.join([item.words for item in items])+'</ol>')
+    return HttpResponse([head,sense,rel,dep])

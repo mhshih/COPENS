@@ -6,11 +6,12 @@
 <div class="flex-container">
 {% for sense,dep_scores in sense_dep_scores.items %}
    <table border=1px>
-   <tr><th>{{sense}}</th><th>freq</th><th>logDice</th>
-   {% for dep,scores in dep_scores.items %}
-      {% for freq,logDice in scores %}
-      <tr><td nowrap>{{dep}}</td><td><a href=api/{{target}}/{{sense}}/dobj/{{dep}}>{{freq}}</a></td><td>{{logDice}}</tr>
-      {% endfor %}
+   <tr><th>{{sense}}</th><th>freq</th><th>logDice</th><th>logDiceH</th></tr>
+   {% for dep,scores in dep_scores %}
+   <tr><td nowrap>{{dep}}</td><td><a href=collocation_api/{{head}}/{{sense}}/{{rel}}/{{dep}}>{{scores.1|length}}</a></td>
+       <td>{{scores.2}}</td>
+       <td>{{scores.0}}</td>
+   </tr>
    {% endfor %}
    </table>
 {% endfor %}

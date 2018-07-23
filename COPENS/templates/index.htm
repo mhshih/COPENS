@@ -1,5 +1,5 @@
-concordance:
-<form action=/concordance method=GET>
+/concordance_api:
+<form action=/concordance_api method=GET>
 {% csrf_token %}
 <input name=keyword>
 <input type=radio name=choice value='4news/'>4news/
@@ -9,8 +9,8 @@ concordance:
 <input type=submit>
 </form>
 
-collocation:
-<form action=/collocation method=GET>
+/sense_collocation:
+<form action=/sense_collocation method=POST>
 {% csrf_token %}
 <input name=keyword>
 <input name=choice type=radio value='SemEval-2007/'>SemEval-2007/

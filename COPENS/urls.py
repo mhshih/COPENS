@@ -18,6 +18,8 @@ from django.urls import path
 from COPENS import views
 
 urlpatterns = [
-    path('api/<str:target>/<str:sense>/<str:rel>/<str:dep>',views.api),
+    path('concordance_api',views.concordance_api),
+    path('collocation_api/<str:head>/<str:sense>/<str:rel>/<str:dep>',views.collocation_api),
+    path('sense_collocation',views.sense_collocation),
     path('',views.home),
 ]
